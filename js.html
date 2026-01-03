@@ -1,0 +1,207 @@
+<script>
+  const vistaContainer = document.getElementById('vistaContainer');
+  const menuItems = document.querySelectorAll('.sidebar li');
+
+  document.addEventListener('DOMContentLoaded', function () {
+    menuItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        activarMenu(item.dataset.vista);
+        cargarVista(item.dataset.vista);
+      });
+    });
+    cargarVista('dashboard');
+  });
+
+  function activarMenu(vista) {
+    menuItems.forEach((item) => {
+      item.classList.toggle('active', item.dataset.vista === vista);
+    });
+  }
+
+  function cargarVista(vista) {
+    vistaContainer.innerHTML = 'Cargando vista...';
+    google.script.run
+      .withSuccessHandler(function (html) {
+        vistaContainer.innerHTML = html;
+        manejarFormularios();
+        renderizarTablas(vista);
+      })
+      .getVista(vista);
+  }
+
+  function renderizarTablas(vista) {
+    if (vista === 'dashboard') {
+      google.script.run
+        .withSuccessHandler(function (turnos) {
+          const total = turnos.length;
+          const activos = turnos.filter((t) => t.estado === 'activo').length;
+          const alertas = turnos.filter((t) => t.estado === 'pendiente').length;
+          actualizarCard('card-total-turnos', total);
+          actualizarCard('card-activos', activos);
+          actualizarCard('card-alertas', alertas);
+        })
+        .listarTurnos();
+    }
+
+    if (vista === 'turnos') {
+      google.script.run
+        .withSuccessHandler(function (turnos) {
+          const tbody = document.querySelector('#tablaTurnos tbody');
+          if (!tbody) return;
+          tbody.innerHTML = '';
+          turnos.forEach(function (t) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${t.id}</td>
+              <td>${t.rut_funcionario}</td>
+              <td>${t.nombre}</td>
+              <td>${t.fecha}</td>
+              <td>${t.tipo_turno}</td>
+              <td>${t.horario}</td>
+              <td><span class="badge ${t.estado === 'activo' ? 'success' : t.estado === 'pendiente' ? 'warning' : 'muted'}">${t.estado}</span></td>
+              <td>${t.observacion || ''}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .listarTurnos();
+    }
+
+    if (vista === 'funcionarios') {
+      google.script.run
+        .withSuccessHandler(function (funcionarios) {
+          const tbody = document.querySelector('#tablaFuncionarios tbody');
+          if (!tbody) return;
+          tbody.innerHTML = '';
+          funcionarios.forEach(function (f) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${f.rut}</td>
+              <td>${f.nombre}</td>
+              <td>${f.unidad}</td>
+              <td>${f.contrato}</td>
+              <td>${f.estado}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .listarFuncionarios();
+    }
+
+    if (vista === 'reportes') {
+      google.script.run
+        .withSuccessHandler(function (turnos) {
+          const tbody = document.querySelector('#tablaReportes tbody');
+          if (!tbody) return;
+          tbody.innerHTML = '';
+          turnos.forEach(function (t) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${t.fecha}</td>
+              <td>${t.rut_funcionario}</td>
+              <td>${t.nombre}</td>
+              <td>${t.tipo_turno}</td>
+              <td>${t.estado}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .listarTurnos();
+    }
+
+    if (vista === 'ajustes') {
+      google.script.run
+        .withSuccessHandler(function (logs) {
+          const tbody = document.querySelector('#tablaLogs tbody');
+          if (!tbody) return;
+          tbody.innerHTML = '';
+          logs.forEach(function (l) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${l.fecha}</td>
+              <td>${l.usuario}</td>
+              <td>${l.accion}</td>
+              <td>${l.detalle}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .obtenerLogs();
+      // obtener parámetros
+      google.script.run
+        .withSuccessHandler(function (params) {
+          const tbody = document.querySelector('#tablaParametros tbody');
+          if (!tbody) return;
+          tbody.innerHTML = '';
+          params.forEach(function (p) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${p.tipo}</td>
+              <td>${p.valor}</td>
+              <td>${p.activo}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .obtenerParametros();
+    }
+  }
+
+  function manejarFormularios() {
+    const formCrearTurno = document.getElementById('formCrearTurno');
+    if (formCrearTurno) {
+      formCrearTurno.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(formCrearTurno).entries());
+        google.script.run
+          .withSuccessHandler(function () {
+            mostrarAlerta('Turno creado correctamente.', 'success');
+            formCrearTurno.reset();
+          })
+          .withFailureHandler(function (err) {
+            mostrarAlerta(err.message || 'Error al crear turno', 'error');
+          })
+          .crearTurno(data);
+      });
+    }
+
+    const formFuncionario = document.getElementById('formFuncionario');
+    if (formFuncionario) {
+      formFuncionario.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(formFuncionario).entries());
+        google.script.run
+          .withSuccessHandler(function () {
+            mostrarAlerta('Funcionario guardado.', 'success');
+            formFuncionario.reset();
+            renderizarTablas('funcionarios');
+          })
+          .withFailureHandler(function (err) {
+            mostrarAlerta(err.message || 'Error al guardar funcionario', 'error');
+          })
+          .guardarFuncionario(data);
+      });
+    }
+
+    const btnCrearTurno = document.getElementById('btnCrearTurno');
+    if (btnCrearTurno) {
+      btnCrearTurno.addEventListener('click', function () {
+        cargarVista('crear_turno');
+      });
+    }
+  }
+
+  function actualizarCard(elementId, value) {
+    const el = document.getElementById(elementId);
+    if (el) {
+      el.textContent = value;
+    }
+  }
+
+  function mostrarAlerta(texto, tipo) {
+    const alert = document.getElementById('alertaSistema');
+    if (!alert) return;
+    alert.textContent = texto;
+    alert.className = 'alert ' + (tipo === 'success' ? 'success' : 'error');
+  }
+</script>
