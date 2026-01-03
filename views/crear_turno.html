@@ -1,0 +1,47 @@
+<div class="section-header">
+  <h2>Crear turno</h2>
+  <button class="btn secondary" onclick="cargarVista('turnos')">Volver</button>
+</div>
+<div id="alertaSistema" class="alert muted"></div>
+<form id="formCrearTurno">
+  <div class="grid-2">
+    <div>
+      <label>RUT funcionario</label>
+      <input name="rut_funcionario" placeholder="12345678-9" required />
+    </div>
+    <div>
+      <label>Nombre funcionario</label>
+      <input name="nombre" placeholder="Nombre completo" required />
+    </div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <label>Fecha</label>
+      <input type="date" name="fecha" required />
+    </div>
+    <div>
+      <label>Tipo de turno</label>
+      <input name="tipo_turno" placeholder="Mañana / Tarde / Noche" required />
+    </div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <label>Horario</label>
+      <input name="horario" placeholder="08:00-16:00" required />
+    </div>
+    <div>
+      <label>Estado</label>
+      <select name="estado" required>
+        <option value="pendiente">Pendiente</option>
+        <option value="activo">Activo</option>
+        <option value="cerrado">Cerrado</option>
+        <option value="cancelado">Cancelado</option>
+      </select>
+    </div>
+  </div>
+  <div>
+    <label>Observación</label>
+    <textarea name="observacion" placeholder="Notas adicionales"></textarea>
+  </div>
+  <button class="btn" type="submit">Guardar turno</button>
+</form>

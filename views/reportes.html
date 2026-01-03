@@ -1,0 +1,42 @@
+<div class="section-header">
+  <h2>Reportes</h2>
+  <span class="badge muted">Consulta y exportación</span>
+</div>
+<div class="grid-2">
+  <div class="card">
+    <h3>Filtros</h3>
+    <div class="grid-2">
+      <div>
+        <label>Fecha desde</label>
+        <input type="date" id="filtroDesde" />
+      </div>
+      <div>
+        <label>Fecha hasta</label>
+        <input type="date" id="filtroHasta" />
+      </div>
+    </div>
+    <div style="margin-top: 12px;">
+      <label>Funcionario</label>
+      <input id="filtroFuncionario" placeholder="RUT o nombre" />
+    </div>
+    <button class="btn" style="margin-top: 12px;" onclick="renderizarTablas('reportes')">Aplicar filtros</button>
+  </div>
+  <div class="card">
+    <div class="section-header">
+      <h3>Resultados</h3>
+      <button class="btn secondary" onclick="google.script.run.registrarLog('EXPORTAR', 'Exportación manual solicitada');">Exportar desde Sheets</button>
+    </div>
+    <table id="tablaReportes">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>RUT</th>
+          <th>Nombre</th>
+          <th>Tipo</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>

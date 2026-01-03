@@ -1,0 +1,44 @@
+<div class="section-header">
+  <h2>Funcionarios</h2>
+  <span class="badge muted">Administración</span>
+</div>
+<div class="grid-2">
+  <div class="card">
+    <h3>Registro</h3>
+    <div id="alertaSistema" class="alert muted"></div>
+    <form id="formFuncionario">
+      <label>RUT</label>
+      <input name="rut" placeholder="12345678-9" required />
+      <label>Nombre</label>
+      <input name="nombre" placeholder="Nombre completo" required />
+      <label>Unidad</label>
+      <input name="unidad" placeholder="Unidad / área" required />
+      <label>Contrato</label>
+      <input name="contrato" placeholder="Planta / Honorarios" required />
+      <label>Estado</label>
+      <select name="estado" required>
+        <option value="activo">Activo</option>
+        <option value="inactivo">Inactivo</option>
+      </select>
+      <button class="btn" type="submit">Guardar</button>
+    </form>
+  </div>
+  <div class="card">
+    <div class="section-header">
+      <h3>Funcionarios registrados</h3>
+      <span class="badge muted">Turnos asociados</span>
+    </div>
+    <table id="tablaFuncionarios">
+      <thead>
+        <tr>
+          <th>RUT</th>
+          <th>Nombre</th>
+          <th>Unidad</th>
+          <th>Contrato</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sistema de Turnos</title>
+    <?!= include('css'); ?>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-title">Sistema de Turnos</div>
+      <div class="user-info" id="userInfo">Administración</div>
+    </header>
+    <div class="layout">
+      <nav class="sidebar">
+        <ul>
+          <li data-vista="dashboard" class="active">Dashboard</li>
+          <li data-vista="turnos">Turnos</li>
+          <li data-vista="funcionarios">Funcionarios</li>
+          <li data-vista="reportes">Reportes</li>
+          <li data-vista="ajustes">Ajustes</li>
+        </ul>
+      </nav>
+      <main class="content">
+        <div id="vistaContainer" class="vista-container">Cargando...</div>
+      </main>
+    </div>
+
+    <?!= include('js'); ?>
+  </body>
+</html>
